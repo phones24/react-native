@@ -27,6 +27,12 @@ public class ImageResizeMode {
     if ("contain".equals(resizeModeValue)) {
       return ScalingUtils.ScaleType.CENTER_INSIDE;
     }
+    if ("containLeft".equals(resizeModeValue)) {
+      return ScalingUtils.ScaleType.FIT_START;
+    }
+    if ("containRight".equals(resizeModeValue)) {
+      return ScalingUtils.ScaleType.FIT_END;
+    }
     if ("cover".equals(resizeModeValue)) {
       return ScalingUtils.ScaleType.CENTER_CROP;
     }

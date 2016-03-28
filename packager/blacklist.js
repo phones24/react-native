@@ -17,6 +17,8 @@ var sharedBlacklist = [
   'node_modules/react/lib/React.js',
   'node_modules/react/lib/ReactDOM.js',
 
+  /node_modules\/react-native\/ReactAndroid\/build\/.*/,
+
   'downstream/core/invariant.js',
 
   /website\/node_modules\/.*/,

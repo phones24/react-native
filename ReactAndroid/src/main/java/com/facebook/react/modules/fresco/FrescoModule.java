@@ -14,6 +14,7 @@ import java.util.HashSet;
 import android.content.Context;
 import android.support.annotation.Nullable;
 
+import com.facebook.common.logging.FLog;
 import com.facebook.cache.common.CacheKey;
 import com.facebook.cache.disk.DiskCacheConfig;
 import com.facebook.common.internal.AndroidPredicates;
@@ -64,6 +65,7 @@ public class FrescoModule extends ReactContextBaseJavaModule implements
   @Override
   public void initialize() {
     super.initialize();
+    //FLog.setMinimumLoggingLevel(FLog.VERBOSE);
     // Make sure the SoLoaderShim is configured to use our loader for native libraries.
     // This code can be removed if using Fresco from Maven rather than from source
     SoLoaderShim.setHandler(new FrescoHandler());

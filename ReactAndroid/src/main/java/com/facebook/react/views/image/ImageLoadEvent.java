@@ -11,6 +11,8 @@ package com.facebook.react.views.image;
 
 import android.support.annotation.IntDef;
 
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.uimanager.events.Event;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
 
@@ -31,10 +33,21 @@ public class ImageLoadEvent extends Event<ImageLoadEvent> {
   public static final int ON_PROGRESS = 5;
 
   private final int mEventType;
+  private final boolean mSuccess;
+  private final String mMessage;
+
+  public ImageLoadEvent(int viewId, long timestampMs, @ImageEventType int eventType, boolean success, String message) {
+    super(viewId, timestampMs);
+    mEventType = eventType;
+    mSuccess = success;
+    mMessage = message;
+  }
 
   public ImageLoadEvent(int viewId, long timestampMs, @ImageEventType int eventType) {
     super(viewId, timestampMs);
     mEventType = eventType;
+    mSuccess = true;
+    mMessage = "";
   }
 
   public static String eventNameForType(@ImageEventType int eventType) {
@@ -68,6 +81,15 @@ public class ImageLoadEvent extends Event<ImageLoadEvent> {
 
   @Override
   public void dispatch(RCTEventEmitter rctEventEmitter) {
-    rctEventEmitter.receiveEvent(getViewTag(), getEventName(), null);
+    if (mEventType == ON_LOAD_END) {
+      WritableMap event = Arguments.createMap();
+      event.putBoolean("success", mSuccess);
+      event.putString("message", mMessage);
+
+      rctEventEmitter.receiveEvent(getViewTag(), getEventName(), event);
+    }
+    else {
+      rctEventEmitter.receiveEvent(getViewTag(), getEventName(), null);
+    }
   }
 }
