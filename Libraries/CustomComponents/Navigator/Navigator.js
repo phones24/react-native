@@ -930,6 +930,25 @@ var Navigator = React.createClass({
     });
   },
 
+  add: function(route) {
+    invariant(!!route, 'Must supply route to push');
+    var activeStack = this.state.routeStack.slice();
+    var activeAnimationConfigStack = this.state.sceneConfigStack.slice();
+    var nextStack = activeStack.concat([route]);
+    var destIndex = nextStack.length - 1;
+    var nextAnimationConfigStack = activeAnimationConfigStack.concat([
+      this.props.configureScene(route, nextStack),
+    ]);
+    this._emitWillFocus(nextStack[destIndex]);
+    this.setState({
+      routeStack: nextStack,
+      sceneConfigStack: nextAnimationConfigStack,
+    }, () => {
+      this._enableScene(destIndex);
+      this._transitionTo(destIndex);
+    });
+  },
+
   _popN: function(n) {
     if (n === 0) {
       return;
