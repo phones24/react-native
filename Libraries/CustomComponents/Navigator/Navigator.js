@@ -880,6 +880,23 @@ var Navigator = React.createClass({
     this._transitionTo(destIndex);
   },
 
+  _addToStack: function(route, activeStack, activeAnimationConfigStack) {
+    invariant(!!route, 'Must supply route to push');
+    var nextStack = activeStack.concat([route]);
+    var destIndex = nextStack.length - 1;
+    var nextAnimationConfigStack = activeAnimationConfigStack.concat([
+      this.props.configureScene(route, nextStack),
+    ]);
+    this._emitWillFocus(nextStack[destIndex]);
+    this.setState({
+      routeStack: nextStack,
+      sceneConfigStack: nextAnimationConfigStack,
+    }, () => {
+      this._enableScene(destIndex);
+      this._transitionTo(destIndex);
+    });
+  },
+
   /**
    * Transition to an existing scene without unmounting
    */
@@ -911,42 +928,19 @@ var Navigator = React.createClass({
    * `jumpForward` to.
    */
   push: function(route) {
-    invariant(!!route, 'Must supply route to push');
     var activeLength = this.state.presentedIndex + 1;
     var activeStack = this.state.routeStack.slice(0, activeLength);
     var activeAnimationConfigStack = this.state.sceneConfigStack.slice(0, activeLength);
-    var nextStack = activeStack.concat([route]);
-    var destIndex = nextStack.length - 1;
-    var nextAnimationConfigStack = activeAnimationConfigStack.concat([
-      this.props.configureScene(route, nextStack),
-    ]);
-    this._emitWillFocus(nextStack[destIndex]);
-    this.setState({
-      routeStack: nextStack,
-      sceneConfigStack: nextAnimationConfigStack,
-    }, () => {
-      this._enableScene(destIndex);
-      this._transitionTo(destIndex);
-    });
+    return this._addToStack(route, activeStack, activeAnimationConfigStack);
   },
 
+  /**
+   * Add a scene to stack and navigate to it, preserving rest of the scenes.
+   */
   add: function(route) {
-    invariant(!!route, 'Must supply route to push');
     var activeStack = this.state.routeStack.slice();
     var activeAnimationConfigStack = this.state.sceneConfigStack.slice();
-    var nextStack = activeStack.concat([route]);
-    var destIndex = nextStack.length - 1;
-    var nextAnimationConfigStack = activeAnimationConfigStack.concat([
-      this.props.configureScene(route, nextStack),
-    ]);
-    this._emitWillFocus(nextStack[destIndex]);
-    this.setState({
-      routeStack: nextStack,
-      sceneConfigStack: nextAnimationConfigStack,
-    }, () => {
-      this._enableScene(destIndex);
-      this._transitionTo(destIndex);
-    });
+    return this._addToStack(route, activeStack, activeAnimationConfigStack);
   },
 
   _popN: function(n) {
